@@ -7,25 +7,23 @@ The official [Heroku Emberjs buildpack](https://www.heroku.com/emberjs) seems so
 
 The use of [Fastboot App Server](https://github.com/ember-fastboot/fastboot-app-server) is now encouraged, where you provide your own Node.js web server.
 
-This buildpack is supposed to be run after the default [Heroku Node.js  buildpack](https://github.com/heroku/heroku-buildpack-nodejs) using Heroku [multi buildpack](https://github.com/heroku/heroku-buildpack-multi) that allows one to run multiple buildpacks in a single deploy process.
-
 It's intentionally as simple as possible, hoping to avoid future maintenance issues.
 
 All it really does is run the build process after the node buildpack has finished.
 
 ## Usage
 
-### Adding Buildpacks
+### Adding buildpacks
 
-For new apps:
+This buildpack is supposed to be run after the default [Heroku Node.js  buildpack](https://github.com/heroku/heroku-buildpack-nodejs) using Heroku [multi buildpack](https://github.com/heroku/heroku-buildpack-multi) that allows one to run multiple buildpacks in a single deploy process.
+
+First set the buildpack to multi
+
 ```
-$ heroku create --buildpack https://github.com/heroku/heroku-buildpack-multi.git
+$ heroku buildpacks:set https://github.com/heroku/heroku-buildpack-multi.git
 ```
-For existing apps:
-```
-$ heroku config:add BUILDPACK_URL=https://github.com/heroku/heroku-buildpack-multi.git
-```
-From here you will need to create a `.buildpacks` file which contains (in order) the Node.js and Ember CLI buildpacks:
+
+Then create a `.buildpacks` file which contains (in order) the Node.js buildpack and then this buildpack:
 ```
 $ cat .buildpacks
 https://github.com/heroku/heroku-buildpack-nodejs.git
