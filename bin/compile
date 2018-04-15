@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+####### Configure environment
+
+set -e            # fail fast
+set -o pipefail   # don't ignore exit codes when piping output
+# set -x          # enable debugging
+
+# Configure directories
+build_dir=$1
+cache_dir=$2
+env_dir=$3
+bp_dir=$(cd $(dirname $0); cd ..; pwd)
+heroku_dir=$build_dir/.heroku
+
+# Load some convenience functions like status(), echo(), and indent()
+source $bp_dir/bin/common.sh
+
+# Avoid GIT_DIR leak from previous build steps
+unset GIT_DIR
+
+# Provide hook to deal with errors
+trap build_failed ERR
+
+# Load config vars into environment; start with defaults
+export EMBER_ENV=production
+export_env_dir $env_dir
+
+# Run subsequent commands from the build directory
+cd $build_dir
+
+####### Build the project's dependencies
+
+head "Building dependencies"
+
+# Build ember cli application
+build_env=${EMBER_ENV:-production}
+head "Building Ember CLI application $build_env distribution"
+node_modules/ember-cli/bin/ember build --environment $build_env | indent
